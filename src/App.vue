@@ -7,18 +7,59 @@
         <button className="form__btn" @click="sendData()" type="text">Send</button>
         <p className="form__error" v-if="flag == 1" > {{ error }}</p> <!--допущена ошибка -->
 
-         <div className="form__message" v-if="(userData.length == 0) && (flag == 0)"> <!--массив пуст и нет ошибок -->
+        <div className="form__message" v-if="(userData.length == 0) && (flag == 0)"> <!--массив пуст и нет ошибок -->
             К сожалению, сейчас нет активных пользователей
         </div>
         <div className="form__message" v-else-if="userData.length != 0"> <!--массив непуст и нет ошибок -->
             Активных пользователей сейчас: {{ userData.length }}
         </div>
-        <div className="users" v-for="(el,index) in userData" :key="index"> <!--проход по массиву с ключом index -->
-            <h3 className="users__name"> {{ el.name }}</h3>
-            <p className="user__info"> {{  el.email }} - {{ el.pass }}</p>
-        </div>
+        <User v-for="(el,index) in userData" :key="index" :index="index" :user="el" :deleteUser="deleteUser"/>
     </div>
 </template>
+
+<script>
+import User from './components/User.vue'
+export default {
+    components: { User },
+    data() {
+        return {
+            flag: 0,
+            userData: [],
+            error: '',
+            userName: '',
+            userPwd: '',
+            userEmail: '',
+        }
+    },
+    methods: {
+        sendData() {
+            if(this.userName == '') {
+                this.flag = 1
+                this.error = 'Имя не введено'
+                return
+            }else if(this.userPwd == '') {
+                this.flag = 1
+                this.error = 'Пароль не введен'
+                return
+            }else if(this.userEmail == '') {
+                this.flag = 1
+                this.error = 'Email не введен'
+                return
+            }
+            this.error = ''
+            this.flag = 0
+            this.userData.push({
+                name: this.userName,
+                pass: this.userPwd,
+                email: this.userEmail
+            })
+        },
+        deleteUser(index) {
+            this.userData.splice(index, 1)
+        }
+    }
+}
+</script>
 
 <style scoped>
     *,
@@ -95,45 +136,7 @@
 
 </style>
 
-<script>
 
-export default {
-    data() {
-        return {
-            flag: 0,
-            userData: [],
-            error: '',
-            userName: '',
-            userPwd: '',
-            userEmail: '',
-        }
-    },
-    methods: {
-        sendData() {
-            if(this.userName == '') {
-                this.flag = 1
-                this.error = 'Имя не введено'
-                return
-            }else if(this.userPwd == '') {
-                this.flag = 1
-                this.error = 'Пароль не введен'
-                return
-            }else if(this.userEmail == '') {
-                this.flag = 1
-                this.error = 'Email не введен'
-                return
-            }
-            this.error = ''
-            this.flag = 0
-            this.userData.push({
-                name: this.userName,
-                pass: this.userPwd,
-                email: this.userEmail
-            })
-        }
-    }
-}
-</script>
 
 
 
